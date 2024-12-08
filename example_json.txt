@@ -1,0 +1,41 @@
+{
+    "attributes": [
+        {
+            "label": "nome",
+            "value": "Nome do Proprietário",
+            "commitment": "9bff8165f1abf93c99bec5dd17bcda5f9f8bb6e3cc8d6d05577a9b1a2279f9d9"
+        },
+        {
+            "label": "morada",
+            "value": "Rua Romana",
+            "commitment": "eb8efaed4cc544df68730bae65293ca74e8ba448cdd9b893fd94b96fb819e7a4"
+        },
+        {
+            "label": "data_nascimento",
+            "value": "01/01/2000",
+            "commitment": "114b6d2001154bb8268584ed54d21bf394465285302117c003a78709a4135dd5"
+        },
+        {
+            "label": "email",
+            "value": "teste@gmail.com"
+            "commitment": "fee113691dcce3a8ee4a6f2368acc0c8a1d93dfea98abc845053d7cdd2dc137c"
+        }
+    ],
+    "digest_function": {
+        "type": "SHA-256"
+    },
+    "chave_publica_owner": [
+        {
+            "value":"-----BEGIN PUBLIC KEY-----\nMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAs8Bj62Wm2oPErsnH21zi\nz4iVZ1Sj5FyoT7bf8NhmBvOg52fTFYgks3/oXtYn5H8JoS2V7bREpipQFTRwjlrU\nkCDFD1u0Dy098uM+JESEd0YQqbWHPdgIgFJYmYhLhLAnJ1EBUHHO1I+ERhOUrUqx\nTKT8d7aO8J+I+o09hzf/3Hc7Z06V8SsO0s50Jn2s5XEjLY77tUGZLohRrhMWou2m\n/3vsmnCQqEr8cN4AW0GKFUlNTBxUJcEhxvva1rP5OtpJsD0rq94r/ClCJO+gwTfe\nZKJ9Unu6sxwUAofqiH7+wpZPMnTZvt0KnyUimQY1QtV7PMPdcn7bbO/SekAXlg0i\nwwIDAQAB\n-----END PUBLIC KEY-----\n"
+            "description of key nature": "some description of the nature of the asymmetric cryptosystem of this key"
+        }
+    ]
+    "Issuer_signature_over_comminments_and_public_key": [
+        {
+            "value": "signature",
+            "timestamp": timestamp,
+            "description": " description of the asymmetric cryptosystem",
+            "issuer_certificate": "issuer_certificate"
+        }
+    ]
+}

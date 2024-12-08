@@ -1,0 +1,33 @@
+{
+    "attributes": [
+        {
+            "label": "nome",
+            "value": "Diogo Cezar",
+            "commitment": "7948864c4d70bfe02be367ff1f4b2fa260619ee80be6e1c806757820134e6bc1"
+        },
+        {
+            "label": "morada",
+            "value": "Rua Romana",
+            "commitment": "6ebfd57d0215c20d65a5394233a1e845611bd93bd6fccd55a074d82e4ba159a2"
+        },
+        {
+            "label": "data_nascimento",
+            "value": "01/01/2000",
+            "commitment": "b7a86c27936670b7e87f4c14cfb54496e6b338e3861b8741e8ac9eacbdd070cb"
+        },
+        {
+            "label": "email",
+            "value": "teste@gmail.com",
+            "commitment": "6bd74a54b1d5b1b4f34495be613e512f357ef770bab0e855d5d2569c7643d7f5"
+        }
+    ],
+    "digest_function": {
+        "type": "SHA-256"
+    },
+    "chave_publica_owner": [
+        {
+            "value": "-----BEGIN PUBLIC KEY-----\nMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAs8Bj62Wm2oPErsnH21zi\nz4iVZ1Sj5FyoT7bf8NhmBvOg52fTFYgks3/oXtYn5H8JoS2V7bREpipQFTRwjlrU\nkCDFD1u0Dy098uM+JESEd0YQqbWHPdgIgFJYmYhLhLAnJ1EBUHHO1I+ERhOUrUqx\nTKT8d7aO8J+I+o09hzf/3Hc7Z06V8SsO0s50Jn2s5XEjLY77tUGZLohRrhMWou2m\n/3vsmnCQqEr8cN4AW0GKFUlNTBxUJcEhxvva1rP5OtpJsD0rq94r/ClCJO+gwTfe\nZKJ9Unu6sxwUAofqiH7+wpZPMnTZvt0KnyUimQY1QtV7PMPdcn7bbO/SekAXlg0i\nwwIDAQAB\n-----END PUBLIC KEY-----\n",
+            "description of key nature": "Tipo: RSA, descricao: Chave p\u00fablica RSA com tamanho de 2048 bits, amplamente utilizada para criptografia assim\u00e9trica."
+        }
+    ]
+}

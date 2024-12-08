@@ -1,0 +1,41 @@
+{
+    "attributes": [
+        {
+            "label": "nome",
+            "value": "Diogo Cezar",
+            "commitment": "7948864c4d70bfe02be367ff1f4b2fa260619ee80be6e1c806757820134e6bc1"
+        },
+        {
+            "label": "morada",
+            "value": "Rua Romana",
+            "commitment": "6ebfd57d0215c20d65a5394233a1e845611bd93bd6fccd55a074d82e4ba159a2"
+        },
+        {
+            "label": "data_nascimento",
+            "value": "01/01/2000",
+            "commitment": "b7a86c27936670b7e87f4c14cfb54496e6b338e3861b8741e8ac9eacbdd070cb"
+        },
+        {
+            "label": "email",
+            "value": "teste@gmail.com",
+            "commitment": "6bd74a54b1d5b1b4f34495be613e512f357ef770bab0e855d5d2569c7643d7f5"
+        }
+    ],
+    "digest_function": {
+        "type": "SHA-256"
+    },
+    "chave_publica_owner": [
+        {
+            "value": "-----BEGIN PUBLIC KEY-----\nMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAs8Bj62Wm2oPErsnH21zi\nz4iVZ1Sj5FyoT7bf8NhmBvOg52fTFYgks3/oXtYn5H8JoS2V7bREpipQFTRwjlrU\nkCDFD1u0Dy098uM+JESEd0YQqbWHPdgIgFJYmYhLhLAnJ1EBUHHO1I+ERhOUrUqx\nTKT8d7aO8J+I+o09hzf/3Hc7Z06V8SsO0s50Jn2s5XEjLY77tUGZLohRrhMWou2m\n/3vsmnCQqEr8cN4AW0GKFUlNTBxUJcEhxvva1rP5OtpJsD0rq94r/ClCJO+gwTfe\nZKJ9Unu6sxwUAofqiH7+wpZPMnTZvt0KnyUimQY1QtV7PMPdcn7bbO/SekAXlg0i\nwwIDAQAB\n-----END PUBLIC KEY-----\n",
+            "description of key nature": "Tipo: RSA, descricao: Chave p\u00fablica RSA com tamanho de 2048 bits, amplamente utilizada para criptografia assim\u00e9trica."
+        }
+    ],
+    "Issuer_signature_over_comminments_and_public_key": [
+        {
+            "value": "6547afdea630f07483313f940b8069ab7653426e4302cec552ae0f9731cbc75f14d9ab2f2f43e62ac3a1f3396ce34f404dcadf67737a9997e3599ad0a93e517568113f6adf4e5529211e19ff10f7c3cdecafddbb4ec15a356b535b486c6a84cc610a3c2c1f4bceed02a4a2a7b8042548d2dc29e0b608ac6d7f557e7318321bc3f306635a0e9ed297c15c14ab5bee6685592e0f29da9c28fbf61ed4587e11a6c35e145649110f45d315fb7fffe16e3313f2550c0e1d69efb574c099c4427571b59e793d78179ed2f6349607bfca4c416612a334053ba94cd0eb29a41fc5f9c03d44505916f3ee3e99b8d2531ee8fbb72026f4db97ac91022455d361abd9dcc82b",
+            "timestamp": 1733623937.1362078,
+            "description": "Assinatura RSA sobre os valores de commitment e chave p\u00fablica do owner.",
+            "issuer_certificate": "-----BEGIN CERTIFICATE-----\nMIID6zCCAtOgAwIBAgIUZBAE++XKf34DvsSP1zkY+AonaI4wDQYJKoZIhvcNAQEL\nBQAwgYQxCzAJBgNVBAYTAlBUMQ8wDQYDVQQIDAZBdmVpcm8xDzANBgNVBAcMBkF2\nZWlybzEhMB8GA1UECgwYSW50ZXJuZXQgV2lkZ2l0cyBQdHkgTHRkMQ8wDQYDVQQD\nDAZJc3N1ZXIxHzAdBgkqhkiG9w0BCQEWEGlzc3VlckBnbWFpbC5jb20wHhcNMjQx\nMjA3MTkwNDI0WhcNMjUxMjA3MTkwNDI0WjCBhDELMAkGA1UEBhMCUFQxDzANBgNV\nBAgMBkF2ZWlybzEPMA0GA1UEBwwGQXZlaXJvMSEwHwYDVQQKDBhJbnRlcm5ldCBX\naWRnaXRzIFB0eSBMdGQxDzANBgNVBAMMBklzc3VlcjEfMB0GCSqGSIb3DQEJARYQ\naXNzdWVyQGdtYWlsLmNvbTCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEB\nAOohTUVAmInyCdZibmd1WTwAN/ddqMW0lKV3mkds0XCQSbSs65b9J/PKnddIJWuh\nfGH4DjUxSiViF0swpYyjB2uXwY6Fwzc+A1rL2vEJmA0vt40WCdGBGg2S1M9mzuwj\nANlSB2IWyRSceCBc6Awckp4cnQ58bcf+nm8kEAgN/m+WTp3QEZIkssNlIoZJOdu9\n0KmO0zH8jWygN1lYdJfJayqw6DqnTquke8doCnPHnIh03OXQlsZs2//ujY48x4Te\np56fJvK238wb/u2C9sCPALoIO/BUMnC67L2qZhRc/SqP2cDFVSIkvzJLm83wzFcs\nKocGMDO0xjuOT895TpXXP6MCAwEAAaNTMFEwHQYDVR0OBBYEFDCpF9X8AtzaVmx2\n9uZK9HNYACCZMB8GA1UdIwQYMBaAFDCpF9X8AtzaVmx29uZK9HNYACCZMA8GA1Ud\nEwEB/wQFMAMBAf8wDQYJKoZIhvcNAQELBQADggEBAOZTQ62HnK2/bhHn+pAOLoTa\nkwx0OPKgZPqfUMREEWYHwiFk0ot/359+6itHNkxozt9amOhvrZqMlRDfIe3g0Kvl\n5WwYOqtFYfcxxekiU9hPthzL9E/HHToriXL88af03jy/4p7Y97IOAEN3SiJv+55Z\n/Bm3mrsQJ9kwkd0vg6Wuw1ycmWEgVOGK8ZgG7c60yvXvvK57Vqsu9EHX45uW1Imb\npt24SQxTfkEI4vJh5bRtIfugqF8pR4ZHwXgr+jNq6AehXZ8DbabEaQ87e7452w/R\nBDsdTdjNDJmLwp1WIY4EBQ7i/zsTHUeY/rMwNGsCI0LqxNVIWyQ8ZzlBC8W0CCI=\n-----END CERTIFICATE-----\n"
+        }
+    ]
+}
