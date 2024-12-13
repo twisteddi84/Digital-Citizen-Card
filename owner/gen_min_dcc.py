@@ -1,14 +1,17 @@
 import json
 import hashlib
 import time
-from cryptography.hazmat.primitives.asymmetric import rsa
-from cryptography.hazmat.primitives import hashes
-from cryptography.hazmat.primitives.asymmetric import padding
-from cryptography.hazmat.primitives import serialization
-from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
-from cryptography.hazmat.primitives import hashes
-from cryptography.hazmat.backends import default_backend
 import base64
+import binascii
+from cryptography.hazmat.primitives.asymmetric import rsa, padding
+from cryptography.hazmat.primitives import hashes, serialization
+from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
+from cryptography.hazmat.backends import default_backend
+from cryptography.hazmat.primitives.hashes import SHA256
+from cryptography.x509 import load_der_x509_certificate
+from cryptography.hazmat.primitives.serialization import Encoding
+from PyKCS11 import *
+from PyKCS11 import PyKCS11, PyKCS11Error
 
 # Função para gerar uma máscara pseudoaleatória com base no nome do atributo e uma senha fornecida pelo usuário
 def gerar_mascara(nome_atributo, senha):
@@ -48,6 +51,46 @@ def assinar_dcc(chave_privada, dados_para_assinar):
     )
     return assinatura
 
+
+def assinar_com_chave_privada(dados):
+    try:
+        # Caminho da biblioteca PKCS#11
+        lib = '/usr/local/lib/libpteidpkcs11.so'
+        pkcs11 = PyKCS11Lib()
+        pkcs11.load(lib)
+        slots = pkcs11.getSlotList()
+        if not slots:
+            print("Nenhum cartão encontrado.")
+            exit()
+
+        # Selecionar o primeiro slot
+        slot = slots[0]
+        session = pkcs11.openSession(slot, PyKCS11.CKF_SERIAL_SESSION | PyKCS11.CKF_RW_SESSION)
+
+        # Localizar a chave privada no cartão
+        priv_key_obj = None
+
+        try:
+            priv_key_obj = session.findObjects([(PyKCS11.CKA_CLASS, PyKCS11.CKO_PRIVATE_KEY), (PyKCS11.CKA_LABEL, "CITIZEN AUTHENTICATION KEY")])[0]
+            mechanism = PyKCS11.Mechanism(PyKCS11.CKM_SHA256_RSA_PKCS)
+            assinatura = session.sign(priv_key_obj, dados, mechanism)
+            assinatura_bytes = bytes(assinatura)  # Converter para bytes
+            session.closeSession()
+            print("Assinatura gerada com sucesso!")
+            return assinatura_bytes, "CKM_SHA256_RSA_PKCS"
+        except IndexError:
+            print("Chave privada não encontrada.")
+            return None, None
+
+    except PyKCS11Error as e:
+        print(f"Erro ao acessar o cartão: {e}")
+    except Exception as e:
+        print(f"Erro na assinatura: {e}")
+
+    return None, None
+
+
+
 def gerar_dcc_com_atributos_visiveis():
     # Pedir ao utilizador para inserir o nome do arquivo JSON com o DCC final
     nome_arquivo = input("Digite o nome do arquivo JSON do DCC final: ")
@@ -73,19 +116,37 @@ def gerar_dcc_com_atributos_visiveis():
     atributos_visiveis = []
     while True:
         try:
-            escolha = input("Digite o número do atributo que deseja manter visível (ou 'sair' para terminar): ")
-            if escolha.lower() == 'sair':
+            # Exibir atributos visíveis
+            if atributos_visiveis:
+                print("\nAtributos visíveis: ", ", ".join(atributos_visiveis))
+            else:
+                print("\nNenhum atributo visível ainda.")
+
+            # Solicitar entrada do usuário
+            escolha = input("\nDigite o número do atributo que deseja manter visível (ou 'gerar' para gerar min dcc): ")
+
+            # Se o usuário digitar 'gerar', sair do loop
+            if escolha.lower() == 'gerar':
                 break
+
+            # Converter a entrada para número inteiro
             escolha = int(escolha)
+
+            # Validar se o número está dentro do intervalo dos atributos
             if 1 <= escolha <= len(atributos):
                 atributo_escolhido = atributos[escolha - 1]
-                if atributo_escolhido not in atributos_visiveis:
+
+                # Se o atributo já estiver na lista, removê-lo
+                if atributo_escolhido in atributos_visiveis:
+                    atributos_visiveis.remove(atributo_escolhido)
+                    print(f"Atributo '{atributo_escolhido}' removido dos visíveis.")
+                else:
+                    # Caso contrário, adicioná-lo
                     atributos_visiveis.append(atributo_escolhido)
                     print(f"Atributo '{atributo_escolhido}' adicionado aos visíveis.")
-                else:
-                    print(f"O atributo '{atributo_escolhido}' já foi adicionado.")
             else:
                 print("Número inválido. Tente novamente.")
+        
         except ValueError:
             print("Entrada inválida. Tente novamente.")
 
@@ -112,19 +173,21 @@ def gerar_dcc_com_atributos_visiveis():
     }
 
     # Carregar a chave privada do proprietário (substitua pelo caminho correto)
-    chave_privada_owner = carregar_chave_privada("private_key_owner.pem")
+    # chave_privada_owner = carregar_chave_privada("private_key_owner.pem")
 
     # Gerar a assinatura do DCC
     dcc_filtrado_str = json.dumps(dcc_filtrado, sort_keys=True)  # Converter o DCC filtrado para string para assinar
     print("Dados a assinar: ", dcc_filtrado_str)
-    assinatura = assinar_dcc(chave_privada_owner, dcc_filtrado_str)
+    # assinatura = assinar_dcc(chave_privada_owner, dcc_filtrado_str)
+    assinatura, mecanismo = assinar_com_chave_privada(dcc_filtrado_str)
 
     # Adicionar a assinatura ao DCC
     timestamp = time.time()
     dcc_filtrado["Owner_signature"] = {
+        #bytes to string
         "signature_value": assinatura.hex(),
         "timestamp": timestamp,
-        "crypto_system": "RSA PKCS1v15 with SHA256"
+        "crypto_system": str(mecanismo)
     }
 
     # Salvar o novo DCC com os atributos visíveis escolhidos e a assinatura

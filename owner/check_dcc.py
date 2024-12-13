@@ -1,13 +1,18 @@
 import json
 import hashlib
-from cryptography.hazmat.primitives import hashes
+import base64
+import binascii
+from cryptography.hazmat.primitives import hashes, serialization
 from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
 from cryptography.hazmat.backends import default_backend
-from cryptography.hazmat.primitives import serialization
-import base64
-from cryptography.hazmat.primitives.asymmetric import padding
-from cryptography.hazmat.primitives import hashes
-from cryptography.x509 import load_pem_x509_certificate
+from cryptography.hazmat.primitives.asymmetric import padding, rsa
+from cryptography.hazmat.primitives.hashes import SHA256
+from cryptography.x509 import load_pem_x509_certificate, load_der_x509_certificate
+from cryptography.hazmat.primitives.serialization import Encoding
+from PyKCS11 import *
+from PyKCS11 import PyKCS11, PyKCS11Error
+
+
 
 # Função para calcular o compromisso
 def calcular_compromisso(nome_atributo, valor_atributo, mascara):
@@ -69,13 +74,14 @@ def validar_assinatura(resposta):
         return False
     except Exception as e:
         print(f"Assinatura do Issuer inválida ou documento adulterado: {e}")
+
+        
         return False
-    
+
+
+
 def validar_assinatura_owner(chave_publica, dados_para_validar, assinatura):
     try:
-        # Calcular o hash dos dados a serem validados
-        hash_dados = hashlib.sha256(dados_para_validar.encode('utf-8')).digest()
-
         # Carregar a chave pública a partir da string PEM
         chave_publica = serialization.load_pem_public_key(
             chave_publica.encode('utf-8'),
@@ -85,10 +91,12 @@ def validar_assinatura_owner(chave_publica, dados_para_validar, assinatura):
         # Converter a assinatura de hexadecimal para bytes
         assinatura_bytes = bytes.fromhex(assinatura)
 
+        dados_bytes = dados_para_validar.encode('utf-8')
+
         # Verificar a assinatura utilizando a chave pública
         chave_publica.verify(
             assinatura_bytes,  # A assinatura a ser validada
-            hash_dados,  # O hash dos dados originais
+            dados_bytes,  # O hash dos dados originais
             padding.PKCS1v15(),  # O esquema de padding
             hashes.SHA256()  # O algoritmo de hash utilizado
         )
@@ -99,6 +107,7 @@ def validar_assinatura_owner(chave_publica, dados_para_validar, assinatura):
         print(f"Erro ao verificar a assinatura: {e}")
     except Exception as e:
         print(f"Assinatura do Owner inválida ou documento adulterado: {e}")
+
     
 def verificarCompromisso(nome_atributo, valor_atributo, mascara, lista_compromissos):
     # Calcular o compromisso
