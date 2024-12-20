@@ -1,0 +1,3 @@
+openssl ecparam -name prime256v1 -genkey -noout -out chave_privada_ec.pem
+
+openssl req -new -x509 -key chave_privada_ec.pem -out certificado_autoassinado.pem -days 365

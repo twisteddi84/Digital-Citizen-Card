@@ -5,7 +5,7 @@ import binascii
 from cryptography.hazmat.primitives import hashes, serialization
 from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
 from cryptography.hazmat.backends import default_backend
-from cryptography.hazmat.primitives.asymmetric import padding, rsa
+from cryptography.hazmat.primitives.asymmetric import padding, rsa, ec
 from cryptography.hazmat.primitives.hashes import SHA256
 from cryptography.x509 import load_pem_x509_certificate, load_der_x509_certificate
 from cryptography.hazmat.primitives.serialization import Encoding
@@ -55,14 +55,17 @@ def validar_assinatura(resposta):
 
         # Gerar os dados para assinar
         dados_para_assinar = json.dumps(compromissos_e_chave_publica, sort_keys=True)
-        hash_dados = hashlib.sha256(dados_para_assinar.encode()).digest()
+
+        hash_dados = hashes.Hash(hashes.SHA1(), backend=default_backend())
+        hash_dados.update(dados_para_assinar.encode())
+        digest = hash_dados.finalize()
+
+        # Verificar a assinatura
         chave_publica.verify(
             assinatura,
-            hash_dados,
-            padding.PKCS1v15(),
-            hashes.SHA256()
+            digest,
+            ec.ECDSA(hashes.SHA1())
         )
-        #verify signature
 
         print("Assinatura do Issuer válida: os dados estão íntegros.")
         return True
@@ -98,7 +101,7 @@ def validar_assinatura_owner(chave_publica, dados_para_validar, assinatura):
             assinatura_bytes,  # A assinatura a ser validada
             dados_bytes,  # O hash dos dados originais
             padding.PKCS1v15(),  # O esquema de padding
-            hashes.SHA256()  # O algoritmo de hash utilizado
+            hashes.SHA512()  # O algoritmo de hash utilizado
         )
 
         print("Assinatura do Owner válida: os dados estão íntegros.")

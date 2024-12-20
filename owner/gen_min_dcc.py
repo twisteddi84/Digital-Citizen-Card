@@ -72,12 +72,12 @@ def assinar_com_chave_privada(dados):
 
         try:
             priv_key_obj = session.findObjects([(PyKCS11.CKA_CLASS, PyKCS11.CKO_PRIVATE_KEY), (PyKCS11.CKA_LABEL, "CITIZEN AUTHENTICATION KEY")])[0]
-            mechanism = PyKCS11.Mechanism(PyKCS11.CKM_SHA256_RSA_PKCS)
+            mechanism = PyKCS11.Mechanism(PyKCS11.CKM_SHA512_RSA_PKCS)
             assinatura = session.sign(priv_key_obj, dados, mechanism)
             assinatura_bytes = bytes(assinatura)  # Converter para bytes
             session.closeSession()
             print("Assinatura gerada com sucesso!")
-            return assinatura_bytes, "CKM_SHA256_RSA_PKCS"
+            return assinatura_bytes, "CKM_SHA512_RSA_PKCS"
         except IndexError:
             print("Chave privada não encontrada.")
             return None, None

@@ -41,7 +41,7 @@ def obter_informacoes_chave_publica(chave_publica):
 # Função para gerar uma máscara pseudoaleatória com base no nome do atributo e uma senha
 def gerar_mascara(senha, nome_atributo):
     kdf = PBKDF2HMAC(
-        algorithm=hashes.SHA256(),  # Usando o SHA-256 do módulo cryptography
+        algorithm=hashes.SHA256(), 
         length=32,
         salt=nome_atributo.encode(),
         iterations=100000,
@@ -282,14 +282,17 @@ def validar_assinatura(resposta):
         # Gerar os dados para assinar
         dados_para_assinar = json.dumps(compromissos_e_chave_publica, sort_keys=True)
         print("Dados para assinar:", dados_para_assinar)
-        hash_dados = hashlib.sha256(dados_para_assinar.encode()).digest()
+
+        hash_dados = hashes.Hash(hashes.SHA1(), backend=default_backend())
+        hash_dados.update(dados_para_assinar.encode())
+        digest = hash_dados.finalize()
+        # Verificar a assinatura
+
         chave_publica.verify(
             assinatura,
-            hash_dados,
-            padding.PKCS1v15(),
-            hashes.SHA256()
+            digest,
+            ec.ECDSA(hashes.SHA1())
         )
-        #verify signature
 
         print("Assinatura válida: os dados estão íntegros.")
         return True
@@ -306,7 +309,7 @@ def validar_assinatura(resposta):
 # Simple socket client to send the request
 def enviar_pedido_socket():
     host = 'localhost'  # Endereço do servidor
-    port = 5003        # Porta do servidor
+    port = 5002        # Porta do servidor
 
     try:
         with open('pedido_dcc.json', 'r') as f:

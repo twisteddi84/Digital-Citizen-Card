@@ -3,12 +3,13 @@ import hashlib
 from cryptography.hazmat.primitives.asymmetric import rsa, padding
 from cryptography.hazmat.primitives import serialization, hashes
 from cryptography.hazmat.backends import default_backend
+from cryptography.hazmat.primitives.asymmetric import ec
 import time
 import socket
 
 # Define the server address and port
 HOST = '0.0.0.0'  # Listen on all interfaces
-PORT = 5003      # Port to listen on
+PORT = 5002      # Port to listen on
 
 # Função para carregar uma chave pública do formato PEM
 def carregar_chave_publica_pem(chave_publica_pem):
@@ -19,15 +20,28 @@ def carregar_chave_publica_pem(chave_publica_pem):
 
 
 # Função para assinar dados com a chave privada do issuer
+# def assinar_dados(chave_privada, dados):
+#     # Calcula o hash dos dados
+#     hash_dados = hashlib.sha1(dados.encode()).digest()
+    
+#     # Assina os dados com a chave privada
+#     assinatura = chave_privada.sign(
+#         hash_dados,
+#         padding.PKCS1v15(),
+#         hashes.SHA1()
+#     )
+#     return assinatura
+
 def assinar_dados(chave_privada, dados):
     # Calcula o hash dos dados
-    hash_dados = hashlib.sha256(dados.encode()).digest()
+    hash_dados = hashes.Hash(hashes.SHA1(), backend=default_backend())
+    hash_dados.update(dados.encode())
+    digest = hash_dados.finalize()
     
     # Assina os dados com a chave privada
     assinatura = chave_privada.sign(
-        hash_dados,
-        padding.PKCS1v15(),
-        hashes.SHA256()
+        digest,
+        ec.ECDSA(hashes.SHA1())
     )
     return assinatura
 
@@ -45,7 +59,7 @@ def completar_dcc(pedido_dcc):
     chave_publica_owner = carregar_chave_publica_pem(pedido_dcc["chave_publica_owner"][0]["value"])
 
     # Carregar a chave privada do issuer
-    with open("private_key.pem", "rb") as f:
+    with open("chave_privada_ec.pem", "rb") as f:
         chave_privada_issuer = serialization.load_pem_private_key(
             f.read(),
             password=None,
@@ -64,13 +78,13 @@ def completar_dcc(pedido_dcc):
     assinatura_issuer = assinar_dados(chave_privada_issuer, dados_para_assinar)
 
     # Carregar o certificado do issuer
-    certificado_issuer = carregar_certificado_issuer("certificate.pem")
+    certificado_issuer = carregar_certificado_issuer("certificado_autoassinado.pem")
 
     # Preparar a estrutura para a assinatura do issuer sobre compromissos e chave pública
     issuer_signature_over_commitments_and_public_key = {
         "value": assinatura_issuer.hex(),
         "timestamp": time.time(),
-        "description": "Assinatura RSA sobre os valores de commitment e chave pública do owner.",
+        "description": "Assinatura com Elliptic Curve (ECDSA) e SHA-1",
         "issuer_certificate": certificado_issuer
     }
 
