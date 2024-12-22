@@ -1,6 +1,4 @@
 import json
-import hashlib
-from cryptography.hazmat.primitives.asymmetric import rsa, padding
 from cryptography.hazmat.primitives import serialization, hashes
 from cryptography.hazmat.backends import default_backend
 from cryptography.hazmat.primitives.asymmetric import ec
@@ -11,26 +9,7 @@ import socket
 HOST = '0.0.0.0'  # Listen on all interfaces
 PORT = 5002      # Port to listen on
 
-# Função para carregar uma chave pública do formato PEM
-def carregar_chave_publica_pem(chave_publica_pem):
-    return serialization.load_pem_public_key(
-        chave_publica_pem.encode(),
-        backend=default_backend()
-    )
 
-
-# Função para assinar dados com a chave privada do issuer
-# def assinar_dados(chave_privada, dados):
-#     # Calcula o hash dos dados
-#     hash_dados = hashlib.sha1(dados.encode()).digest()
-    
-#     # Assina os dados com a chave privada
-#     assinatura = chave_privada.sign(
-#         hash_dados,
-#         padding.PKCS1v15(),
-#         hashes.SHA1()
-#     )
-#     return assinatura
 
 def assinar_dados(chave_privada, dados):
     # Calcula o hash dos dados
@@ -55,8 +34,6 @@ def carregar_certificado_issuer(caminho_certificado):
 
 # Função para gerar o DCC final
 def completar_dcc(pedido_dcc):
-    # Carregar a chave pública do owner a partir do pedido
-    chave_publica_owner = carregar_chave_publica_pem(pedido_dcc["chave_publica_owner"][0]["value"])
 
     # Carregar a chave privada do issuer
     with open("chave_privada_ec.pem", "rb") as f:

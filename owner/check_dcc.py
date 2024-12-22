@@ -1,17 +1,12 @@
 import json
 import hashlib
 import base64
-import binascii
 from cryptography.hazmat.primitives import hashes, serialization
 from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
 from cryptography.hazmat.backends import default_backend
-from cryptography.hazmat.primitives.asymmetric import padding, rsa, ec
-from cryptography.hazmat.primitives.hashes import SHA256
-from cryptography.x509 import load_pem_x509_certificate, load_der_x509_certificate
-from cryptography.hazmat.primitives.serialization import Encoding
+from cryptography.hazmat.primitives.asymmetric import padding, ec
+from cryptography.x509 import load_pem_x509_certificate
 from PyKCS11 import *
-from PyKCS11 import PyKCS11, PyKCS11Error
-
 
 
 # Função para calcular o compromisso
@@ -35,11 +30,10 @@ def gerar_mascara(senha, nome_atributo):
 
 
 
-def validar_assinatura(resposta):
+def validar_assinatura_issuer(resposta):
     try:
         # Extrair dados da assinatura
         assinatura_data = resposta['Issuer_signature'][0]
-        
         assinatura = bytes.fromhex(assinatura_data['value'])
         certificado_pem = assinatura_data['issuer_certificate']
         
@@ -166,7 +160,7 @@ def menu():
             verDados(dcc_doc)
         elif escolha == '2':
             open_dcc_doc = json.load(open(dcc_doc))
-            validar_assinatura(open_dcc_doc)
+            validar_assinatura_issuer(open_dcc_doc)
 
             chave_publica = open_dcc_doc["chave_publica_owner"][0]["value"]
             #retirar o campo Owner_signature

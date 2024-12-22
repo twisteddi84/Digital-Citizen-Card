@@ -3,26 +3,21 @@ import hashlib
 import socket
 import time
 from datetime import datetime, timezone
-
 from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
-from cryptography.hazmat.primitives.asymmetric import rsa, padding, ec
+from cryptography.hazmat.primitives.asymmetric import rsa, ec
 from cryptography.hazmat.primitives import serialization, hashes
 from cryptography.hazmat.backends import default_backend
-from cryptography.hazmat.primitives.asymmetric import padding
 from cryptography.hazmat.primitives import hashes
 from cryptography.x509 import load_pem_x509_certificate, load_der_x509_certificate
-from cryptography.hazmat.primitives.serialization import Encoding
 from cryptography.x509.oid import NameOID
-
 from PyKCS11 import *
 from PyKCS11 import PyKCS11, PyKCS11Error
-
 from pyasn1.codec.der.decoder import decode
 from pyasn1.type.univ import Sequence
 
 
+# Função para carregar a chave privada do proprietário
 def obter_informacoes_chave_publica(chave_publica):
-    
     # Verificar tipo de chave e extrair informações
     if isinstance(chave_publica, rsa.RSAPublicKey):
         tipo = "RSA"
@@ -50,7 +45,6 @@ def gerar_mascara(senha, nome_atributo):
     return kdf.derive(senha.encode())  # Gera a máscara
 
 
-
 # Função para calcular o compromisso
 def calcular_compromisso(nome_atributo, valor_atributo, mascara):
     compromisso = hashlib.sha256()
@@ -59,7 +53,7 @@ def calcular_compromisso(nome_atributo, valor_atributo, mascara):
     compromisso.update(mascara)  # Adiciona a máscara
     return compromisso.hexdigest()
 
-
+# Função para carregar a chave privada do proprietário
 def get_chave_publica():
     try:
         # Caminho da biblioteca PKCS#11
@@ -109,6 +103,7 @@ def get_chave_publica():
 
     return None
 
+# Função para carregar data de nascimento a partir da extensão
 def get_birth_date_from_extension(extension):
     try:
         decoded_value, _ = decode(extension)
@@ -131,8 +126,6 @@ def get_birth_date_from_extension(extension):
     except Exception as e:
         print(f"Error decoding subjectDirectoryAttributes: {e}")
         return None
-
-
 
 # Função principal para gerar o pedido de DCC (com chave pública)
 def gerar_pedido_dcc():
@@ -169,7 +162,6 @@ def gerar_pedido_dcc():
                         if isinstance(cert_value, tuple):
                             cert_value = bytes(cert_value)  # Convert tuple of ints to bytes
                         if isinstance(cert_value, bytes):
-                  
                             # Parse the certificate
                             cert = load_der_x509_certificate(cert_value)
                             subject = cert.subject
@@ -186,7 +178,6 @@ def gerar_pedido_dcc():
                                 subject.get_attributes_for_oid(NameOID.ORGANIZATION_NAME)[0].value
                                 if subject.get_attributes_for_oid(NameOID.ORGANIZATION_NAME) else None
                             )
-                            public_key = cert.public_key()
                           
                             for ex in cert.extensions:
                                 oid = ex.oid.dotted_string
@@ -261,7 +252,8 @@ def gerar_pedido_dcc():
 
     print("Pedido de DCC gerado, assinado e salvo como 'pedido_dcc.json'.")
 
-def validar_assinatura(resposta):
+# Função para validar a assinatura do issuer
+def validar_assinatura_issuer(resposta):
     try:
         # Extrair dados da assinatura
         assinatura_data = resposta['Issuer_signature_over_comminments_and_public_key'][0]
@@ -347,12 +339,10 @@ def enviar_pedido_socket():
     
     resposta = json.loads(response)
     dcc = resposta['dcc']
-    if validar_assinatura(dcc):
+    if validar_assinatura_issuer(dcc):
         # Salvar o DCC final em um arquivo JSON
         with open('dcc_final.json', 'w') as f:
             json.dump(dcc, f, indent=4)
-
-        
 
 # Menu for user input
 def menu():

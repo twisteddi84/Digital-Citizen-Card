@@ -1,19 +1,13 @@
 import json
-import hashlib
 import time
 import base64
-import binascii
-from cryptography.hazmat.primitives.asymmetric import rsa, padding
-from cryptography.hazmat.primitives import hashes, serialization
+from cryptography.hazmat.primitives import hashes
 from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
 from cryptography.hazmat.backends import default_backend
-from cryptography.hazmat.primitives.hashes import SHA256
-from cryptography.x509 import load_der_x509_certificate
-from cryptography.hazmat.primitives.serialization import Encoding
 from PyKCS11 import *
 from PyKCS11 import PyKCS11, PyKCS11Error
 
-# Função para gerar uma máscara pseudoaleatória com base no nome do atributo e uma senha fornecida pelo usuário
+# Função para gerar uma máscara pseudoaleatória com base no nome do atributo e uma senha fornecida
 def gerar_mascara(nome_atributo, senha):
     kdf = PBKDF2HMAC(
         algorithm=hashes.SHA256(),  # Usando o SHA-256 do módulo cryptography
@@ -30,28 +24,9 @@ def gerar_mascara(nome_atributo, senha):
 
 # Função para codificar em base64
 def encode_base64(data):
-    return base64.b64encode(data).decode('utf-8')  # Codifica e retorna como string
+    return base64.b64encode(data).decode('utf-8') 
 
-# Função para carregar a chave privada do proprietário (em formato PEM)
-def carregar_chave_privada(caminho_arquivo):
-    with open(caminho_arquivo, 'rb') as f:
-        chave_privada = serialization.load_pem_private_key(f.read(), password=None, backend=default_backend())
-    return chave_privada
-
-# Função para gerar a assinatura usando a chave privada do proprietário
-def assinar_dcc(chave_privada, dados_para_assinar):
-    # Calcular o hash do conteúdo para assinar
-    hash_dados = hashlib.sha256(dados_para_assinar.encode('utf-8')).digest()
-
-    # Assinar os dados (hash) com a chave privada
-    assinatura = chave_privada.sign(
-        hash_dados,
-        padding.PKCS1v15(),
-        hashes.SHA256()
-    )
-    return assinatura
-
-
+# Função para assinar dados com a chave privada do cartão
 def assinar_com_chave_privada(dados):
     try:
         # Caminho da biblioteca PKCS#11
@@ -90,7 +65,7 @@ def assinar_com_chave_privada(dados):
     return None, None
 
 
-
+# Função para gerar o DCC com os atributos visíveis escolhidos
 def gerar_dcc_com_atributos_visiveis():
     # Pedir ao utilizador para inserir o nome do arquivo JSON com o DCC final
     nome_arquivo = input("Digite o nome do arquivo JSON do DCC final: ")
@@ -172,13 +147,9 @@ def gerar_dcc_com_atributos_visiveis():
         "Issuer_signature": dcc_final["Issuer_signature_over_comminments_and_public_key"]
     }
 
-    # Carregar a chave privada do proprietário (substitua pelo caminho correto)
-    # chave_privada_owner = carregar_chave_privada("private_key_owner.pem")
-
     # Gerar a assinatura do DCC
-    dcc_filtrado_str = json.dumps(dcc_filtrado, sort_keys=True)  # Converter o DCC filtrado para string para assinar
+    dcc_filtrado_str = json.dumps(dcc_filtrado, sort_keys=True)
     print("Dados a assinar: ", dcc_filtrado_str)
-    # assinatura = assinar_dcc(chave_privada_owner, dcc_filtrado_str)
     assinatura, mecanismo = assinar_com_chave_privada(dcc_filtrado_str)
 
     # Adicionar a assinatura ao DCC
