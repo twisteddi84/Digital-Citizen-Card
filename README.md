@@ -20,7 +20,7 @@ cd owner
 ```bash
 python3 req_dcc.py
 ```
-Follow menu steps and use the card reader. This file will save a JSON file named dcc_final.json be default.
+Follow menu steps and use the card reader. This file will save a JSON file named dcc_final.json by default.
 
 
 ### Generate the Min DCC
@@ -32,7 +32,7 @@ cd owner
 python3 gen_min_dcc.py
 ```
 
-Follow steps indicated in the script. This script will create a min_dcc.json file be default
+Follow steps indicated in the script. This script will create a min_dcc.json file by default
 
 ### Check the Min Dcc
 ```bash
