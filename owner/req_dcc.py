@@ -139,6 +139,13 @@ def gerar_pedido_dcc():
     
     slot = slots[0]
     slots = pkcs11.getSlotList(tokenPresent=True)
+
+    full_name = "None"
+    id_number = "None"
+    country = "None"
+    organization = "None"
+    birth_date = "None"
+
     
     for slot in slots:
         token_info = pkcs11.getTokenInfo(slot)
@@ -167,8 +174,9 @@ def gerar_pedido_dcc():
                             subject = cert.subject
                             # Extract details
                             full_name = subject.get_attributes_for_oid(NameOID.COMMON_NAME)[0].value
+
                             id_number = subject.get_attributes_for_oid(NameOID.SERIAL_NUMBER)[0].value
-                            
+
                             # Additional data (may require custom OIDs for NIF, NSS, Utent, Birth Date)
                             country = (
                                 subject.get_attributes_for_oid(NameOID.COUNTRY_NAME)[0].value
